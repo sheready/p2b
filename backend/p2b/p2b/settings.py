@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'lms.apps.LmsConfig',
     'corsheaders',
+    'django_filters',
     
 ]
 
@@ -74,7 +75,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'p2b.wsgi.application'
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
