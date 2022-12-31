@@ -1,38 +1,138 @@
-.App {
-  text-align: center;
+body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.container-header{
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(156,191,74,1) 36%);
+    height: 20vh;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.container-header .logo{
+    width: 60%;
+    margin-left: 20%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.container-header nav{
+    margin-left: 35%;
+    margin-top: 1.5%;
+    padding: 5px;
+}
+nav a {
+    display: inline;
+    font-size: 30px;
+    color: #7b6e6a;
+    padding-bottom: 0.15em;
+    border-bottom: 2px solid transparent;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 5px;
   }
+  
+nav a:hover, 
+.nav-active {
+color: #5dabaa;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container-footer{
+    background: rgb(0,0,0);
+    left:0;
+    bottom:0;
+    right:0;
+    height: 20vh;
+
+}
+
+.container-home{
+  height: 380px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: row;
+  margin-top: 1%;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.container-slides div{
+  height: 500px;
+  width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.imgslide{
+  width: 100%;
+  height: 350px;
+}
+
+.container-content{
+  margin: 20px;
+  padding: 10px;
+}
+
+.container-content h1{
+  font-size: 35px;
+  color: #7b6e6a;
+  font-weight: bold;
+}
+
+.container-content p{
+  font-size: 25px;
+  
+}
+.container-video{
+  width: 100%;
+  height: 450px;
+}
+.container-video iframe{
+  width: 100%;
+  height: 400px;
+}
+
+.container-content-video{
+  margin: 20px;
+  padding: 10px;
+}
+.container-content-video h1{
+  font-size: 35px;
+  color: #7b6e6a;
+  font-weight: bold;
+}
+
+.container-content-video p{
+  font-size: 25px;
+  
+}
+.container-courses{
+  margin: 1%;
+}
+
+@media (max-width: 767px) {
+    nav a {
+      padding: 0.35em 0;
+    }
+
   }
-  to {
-    transform: rotate(360deg);
-  }
+  
+  @media (min-width: 768px) {
+    header, 
+    nav {
+      display: flex;
+      align-items: center;
+    } 
+    header.container {
+      margin-bottom: 1em;
+    }
+    nav {
+      margin-left: auto;
+    }
+    nav a {
+      margin-left: 1.25em;
+    }
+    .nav-active {
+      border-bottom: 2px solid currentColor;
+    }
+
 }
