@@ -1,4 +1,5 @@
 from re import search
+from urllib import request
 from xml.dom import ValidationErr
 from django.shortcuts import render
 from rest_framework.parsers import JSONParser
@@ -8,7 +9,7 @@ from lms.models import Course
 from lms.serializers import CourseSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 
 # Create your views here.
 
@@ -32,10 +33,11 @@ class CourseCreate(CreateAPIView):
             raise ValidationErr({'cost': 'A valid number is required'})
         return super().create(request, *args, **kwargs)
 
-class CourseDelete(DestroyAPIView):
+class CourseRetrieveUpdateDelete(RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all()
     lookup_field = 'id'
-    #clearing the cache
+    serializer_class = CourseSerializer
+    #delete and clearing the cache
     def delete(self, request, *args, **kwargs):
         course_id = request.data.get('id')
         response = super().delete(request, *args, **kwargs)
@@ -43,35 +45,19 @@ class CourseDelete(DestroyAPIView):
             from django.core.cache import cache
             cache.delete('course_data_{}'.format(course_id))
         return response
+    #update note
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            course = response.data
+            #stores data in the cache
+            cache.set('course_data_{}'.format(course['id']),
+            {
+                'title' :course['title'],
+                'description' : course['description'],
+                'cost' : course['cost']
+            })
+        return response
 
-@api_view(['GET'])
-def getCourse(request, pk):
-    courses = Course.objects.get(id=pk)
-    serializer = CourseSerializer(courses, many=False)
-    return Response(serializer.data)
 
-@api_view(['POST'])
-def createCourse(request):
-    data = request.data
-    course = Course.objects.create(
-        title = data['title'],
-        description = data['description'],
-        cost = data['cost']
-    )
-    serializer = CourseSerializer(course, many= False)
-    return Response(serializer.data)
-
-@api_view(['PUT'])
-def updateCourse(request, pk):
-    data = request.data
-    course = Course.objects.get(id=pk)
-    serializer = CourseSerializer(instance=course, data=data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
-
-@api_view(['DELETE'])
-def deleteCourse(request, pk):
-    course = Course.objects.get(id=pk)
-    course.delete()
-    return Response('Course has been deleted')
