@@ -8,57 +8,9 @@ from lms.models import Course
 from lms.serializers import CourseSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
 
 # Create your views here.
-
-@api_view(['GET'])
-def getRoutes(request):
-
-    routes = [
-        {
-            'Endpoint': '/courses/',
-            'method': 'GET',
-            'title': None,
-            'description': None,
-            'cost': None,
-            'details': 'Returns an array of courses'
-        },
-        {
-            'Endpoint': '/courses/id',
-            'method': 'GET',
-            'title': None,
-            'description': None,
-            'cost': None,
-            'details': 'Returns a course instance'
-        },
-        {
-            'Endpoint': '/courses/create/',
-            'method': 'POST',
-            'title': {'title': ""},
-            'description':{'description': ""},
-            'cost': {'cost': ""},
-            'details': 'Creates new course with data sent in post request'
-        },
-        {
-            'Endpoint': '/courses/id/update/',
-            'method': 'PUT',
-            'title': {'title': ""},
-            'description':{'description': ""},
-            'cost': {'cost': ""},
-            'details': 'Creates an existing note with data sent in post request'
-        },
-        {
-            'Endpoint': '/courses/id/delete/',
-            'method': 'DELETE',
-            'title': {'title': ""},
-            'description':{'description': ""},
-            'cost': {'cost': ""},
-            'details': 'Deletes and exiting note'
-        },
-    ]
-
-    return Response(routes)
 
 #get all courses
 class CourseList(ListAPIView):
@@ -67,7 +19,7 @@ class CourseList(ListAPIView):
     filter_backends = [DjangoFilterBackend,SearchFilter]
     search_fields = ['title', 'description']
 
-
+#create a course
 class CourseCreate(CreateAPIView):
     serializer_class = CourseSerializer
 
@@ -80,7 +32,17 @@ class CourseCreate(CreateAPIView):
             raise ValidationErr({'cost': 'A valid number is required'})
         return super().create(request, *args, **kwargs)
 
-
+class CourseDelete(DestroyAPIView):
+    queryset = Course.objects.all()
+    lookup_field = 'id'
+    #clearing the cache
+    def delete(self, request, *args, **kwargs):
+        course_id = request.data.get('id')
+        response = super().delete(request, *args, **kwargs)
+        if response.status_code == 204:
+            from django.core.cache import cache
+            cache.delete('course_data_{}'.format(course_id))
+        return response
 
 @api_view(['GET'])
 def getCourse(request, pk):
