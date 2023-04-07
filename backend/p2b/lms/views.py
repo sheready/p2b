@@ -56,7 +56,9 @@ class CourseRetrieveUpdateDelete(RetrieveUpdateDestroyAPIView):
             {
                 'title' :course['title'],
                 'description' : course['description'],
-                'cost' : course['cost']
+                'cost' : course['cost'],
+                'photo' : course['photo'],
+                'video' : course['video']
             })
         return response
 
